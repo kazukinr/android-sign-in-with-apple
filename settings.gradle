@@ -1,0 +1,2 @@
+include ':example', ':signin'
+rootProject.name='android-sign-in-with-apple'
