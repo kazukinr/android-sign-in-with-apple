@@ -1,4 +1,4 @@
-package com.github.kazukinr.android.signin
+package com.github.kazukinr.android.signinwithapple2
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.github.kazukinr.android.signin.test", appContext.packageName)
+        assertEquals("com.github.kazukinr.android.signinwithapple", appContext.packageName)
     }
 }

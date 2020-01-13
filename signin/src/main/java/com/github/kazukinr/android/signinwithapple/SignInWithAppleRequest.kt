@@ -1,4 +1,4 @@
-package com.github.kazukinr.android.signin
+package com.github.kazukinr.android.signinwithapple
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

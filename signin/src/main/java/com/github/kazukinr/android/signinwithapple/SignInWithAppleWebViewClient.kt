@@ -1,4 +1,4 @@
-package com.github.kazukinr.android.signin
+package com.github.kazukinr.android.signinwithapple
 
 import android.net.Uri
 import android.webkit.WebResourceRequest
@@ -28,16 +28,32 @@ internal class SignInWithAppleWebViewClient(
                 it.contains(request.redirectUri) -> {
                     val code = url.getQueryParameter("code")
                     val state = url.getQueryParameter("state")
+                    val err = url.getQueryParameter("error")
 
                     when {
+                        err == "user_cancelled_authorize" -> {
+                            callback(SignInWithAppleResult.Cancel)
+                        }
                         code == null -> {
-                            callback(SignInWithAppleResult.Failure(IllegalArgumentException("code is not returned")))
+                            callback(
+                                SignInWithAppleResult.Failure(
+                                    IllegalArgumentException("code is not returned")
+                                )
+                            )
                         }
                         state != request.state -> {
-                            callback(SignInWithAppleResult.Failure(IllegalArgumentException("state is not matched")))
+                            callback(
+                                SignInWithAppleResult.Failure(
+                                    IllegalArgumentException("state is not matched")
+                                )
+                            )
                         }
                         else -> {
-                            callback(SignInWithAppleResult.Success(code))
+                            callback(
+                                SignInWithAppleResult.Success(
+                                    code
+                                )
+                            )
                         }
                     }
                     true

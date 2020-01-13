@@ -1,4 +1,4 @@
-package com.github.kazukinr.android.signinwithapple
+package com.github.kazukinr.android.signinwithapple2
 
 import org.junit.Test
 
