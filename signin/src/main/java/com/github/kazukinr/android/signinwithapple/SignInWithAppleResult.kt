@@ -3,14 +3,23 @@ package com.github.kazukinr.android.signinwithapple
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-sealed class SignInWithAppleResult : Parcelable {
+@Parcelize
+data class SignInWithAppleResult(
+    val code: String? = null,
+    val idToken: String? = null,
+    val user: User? = null
+) : Parcelable {
 
     @Parcelize
-    data class Success(val authCode: String) : SignInWithAppleResult()
+    data class User(
+        val name: Name? = null,
+        val email: String? = null
+    ) : Parcelable {
 
-    @Parcelize
-    data class Failure(val throwable: Throwable) : SignInWithAppleResult()
-
-    @Parcelize
-    object Cancel : SignInWithAppleResult()
+        @Parcelize
+        data class Name(
+            val firstName: String?,
+            val lastName: String?
+        ) : Parcelable
+    }
 }
