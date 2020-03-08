@@ -11,9 +11,9 @@ import com.github.kazukinr.android.signinwithapple.R
 import com.github.kazukinr.android.signinwithapple.SignInWithAppleRequest
 import com.github.kazukinr.android.signinwithapple.SignInWithAppleResult
 import com.github.kazukinr.android.signinwithapple.databinding.SignInWithAppleActivityBinding
+import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClient
 import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClientForPost
 import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClientForQuery
-import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClient
 
 @SuppressLint("SetJavaScriptEnabled")
 internal class SignInWithAppleActivity : AppCompatActivity() {
@@ -78,9 +78,7 @@ internal class SignInWithAppleActivity : AppCompatActivity() {
             if (req.isQueryResponseType) {
                 webViewClient = SignInWithAppleWebViewClientForQuery(req, authCallback)
             } else {
-                webViewClient = SignInWithAppleWebViewClientForPost(req, authCallback).also {
-                    it.register(this)
-                }
+                webViewClient = SignInWithAppleWebViewClientForPost(req, authCallback, this)
             }
         }
 

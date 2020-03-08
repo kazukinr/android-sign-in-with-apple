@@ -11,12 +11,13 @@ import org.json.JSONObject
 
 class SignInWithAppleWebViewClientForPost(
     override val request: SignInWithAppleRequest,
-    override val callback: SignInWithAppleWebViewClient.Callback
+    override val callback: SignInWithAppleWebViewClient.Callback,
+    webView: WebView
 ) : WebViewClient(), SignInWithAppleWebViewClient {
 
     private val recorder = PayloadRecorder()
 
-    fun register(webView: WebView) {
+    init {
         webView.addJavascriptInterface(recorder, "recorder")
     }
 
