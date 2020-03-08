@@ -25,4 +25,8 @@ data class SignInWithAppleRequest(
     }
 
     val isQueryResponseType: Boolean = this.responseType == ResponseType.CODE && this.scope == null
+
+    val isCodeRequested: Boolean = this.responseType == ResponseType.CODE || this.responseType == ResponseType.BOTH
+
+    val isIdTokenRequested: Boolean = this.responseType == ResponseType.ID_TOKEN || this.responseType == ResponseType.BOTH
 }

@@ -11,8 +11,9 @@ import com.github.kazukinr.android.signinwithapple.R
 import com.github.kazukinr.android.signinwithapple.SignInWithAppleRequest
 import com.github.kazukinr.android.signinwithapple.SignInWithAppleResult
 import com.github.kazukinr.android.signinwithapple.databinding.SignInWithAppleActivityBinding
-import com.github.kazukinr.android.signinwithapple.internal.webview.AuthWebViewClient
-import com.github.kazukinr.android.signinwithapple.internal.webview.AuthWebViewClientDelegate
+import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClientForPost
+import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClientForQuery
+import com.github.kazukinr.android.signinwithapple.internal.webview.SignInWithAppleWebViewClient
 
 @SuppressLint("SetJavaScriptEnabled")
 internal class SignInWithAppleActivity : AppCompatActivity() {
@@ -35,7 +36,7 @@ internal class SignInWithAppleActivity : AppCompatActivity() {
 
     private lateinit var binding: SignInWithAppleActivityBinding
 
-    private val authCallback = object : AuthWebViewClientDelegate.Callback {
+    private val authCallback = object : SignInWithAppleWebViewClient.Callback {
         override fun onSuccess(result: SignInWithAppleResult) {
             val data = Intent().apply {
                 putExtra(KEY_EXTRA_RESULT, result)
@@ -74,11 +75,13 @@ internal class SignInWithAppleActivity : AppCompatActivity() {
             javaScriptCanOpenWindowsAutomatically = true
         }
         binding.webView.apply {
-            val clientDelegate = AuthWebViewClientDelegate.create(req).also {
-                it.callback = authCallback
+            if (req.isQueryResponseType) {
+                webViewClient = SignInWithAppleWebViewClientForQuery(req, authCallback)
+            } else {
+                webViewClient = SignInWithAppleWebViewClientForPost(req, authCallback).also {
+                    it.register(this)
+                }
             }
-            clientDelegate.register(this)
-            webViewClient = AuthWebViewClient(clientDelegate)
         }
 
         if (savedInstanceState != null) {

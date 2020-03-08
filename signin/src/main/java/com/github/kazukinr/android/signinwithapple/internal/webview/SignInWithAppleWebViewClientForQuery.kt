@@ -1,23 +1,30 @@
 package com.github.kazukinr.android.signinwithapple.internal.webview
 
-import android.graphics.Bitmap
+import android.annotation.TargetApi
 import android.net.Uri
+import android.os.Build
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.github.kazukinr.android.signinwithapple.SignInWithAppleRequest
 import com.github.kazukinr.android.signinwithapple.SignInWithAppleResult
 import com.github.kazukinr.android.signinwithapple.internal.ErrorInfo
 
-internal class AuthWebViewClientDelegateForQuery(
-    override val request: SignInWithAppleRequest
-) : AuthWebViewClientDelegate {
+class SignInWithAppleWebViewClientForQuery(
+    override val request: SignInWithAppleRequest,
+    override val callback: SignInWithAppleWebViewClient.Callback
+) : WebViewClient(), SignInWithAppleWebViewClient {
 
-    override var callback: AuthWebViewClientDelegate.Callback? = null
-
-    override fun register(webView: WebView) {
-        //nop
+    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+        return handleUrlLoading(view, Uri.parse(url))
     }
 
-    override fun handleUrlLoading(webView: WebView, url: Uri): Boolean {
+    @TargetApi(Build.VERSION_CODES.N)
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        return handleUrlLoading(view, request.url)
+    }
+
+    private fun handleUrlLoading(webView: WebView, url: Uri): Boolean {
         return url.toString().let {
             when {
                 it.contains("appleid.apple.com") -> false
@@ -28,16 +35,16 @@ internal class AuthWebViewClientDelegateForQuery(
 
                     when {
                         err == "user_cancelled_authorize" -> {
-                            callback?.onCancel()
+                            callback.onCancel()
                         }
                         code == null -> {
-                            callback?.onError(ErrorInfo.NOT_FOUND, "code.not.found")
+                            callback.onError(ErrorInfo.NOT_FOUND, "code.not.found")
                         }
                         state != request.state -> {
-                            callback?.onError(ErrorInfo.INTERNAL, "state.not.matched")
+                            callback.onError(ErrorInfo.INTERNAL, "state.not.matched")
                         }
                         else -> {
-                            callback?.onSuccess(SignInWithAppleResult(code = code))
+                            callback.onSuccess(SignInWithAppleResult(code = code))
                         }
                     }
                     true
@@ -45,9 +52,5 @@ internal class AuthWebViewClientDelegateForQuery(
                 else -> false
             }
         }
-    }
-
-    override fun handlePageStarted(webView: WebView, url: String, favicon: Bitmap?): Boolean {
-        return false
     }
 }
